@@ -1,5 +1,6 @@
 const xlsx2json = require('xlsx-2-json')
 const appRoot = require('app-root-path')
+const fs = require('fs')
 
 module.exports.create = function (req, res) {
     const filename = req.files[0].filename;
@@ -9,27 +10,33 @@ module.exports.create = function (req, res) {
 
     xlsx2json({
             input: `${temp}`,
-            output: `${outpath}`
+            output: null
     }, 
         function(err, result) {
             if (err) {
             return res.status(401).json(err);
             } else {
-                result.forEach(result => {
-                    const obj = {
-                        Номер: result.Номер,
-                        Тип: result.Тип_БСО,
-                        Подразделение: result.Подразделение,
-                        Статус: result.Статус
-                    }
-                    console.log(obj)
-                    return obj
+                var obj = result.map(function(element) {
+                   return  object ={
+                       "Номер": element.Номер,
+                       "Тип": element.Тип_БСО,            
+                       "Подразделение":element.Подразделение,
+                       "Статус": element.Статус
+                                    }
+                   
+                    // console.log(obj)
                 });
-                // console.log(result)
+                 console.log(obj)
                 
             }
-            return res.json(result)
+            return res.status(200).json(obj)
+            
         }    
     )
-         
+    try{
+        fs.unlinkSync(temp)
+    }
+    catch (e) {
+        console.log(e)
+    }     
 }
