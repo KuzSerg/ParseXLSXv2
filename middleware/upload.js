@@ -12,12 +12,11 @@ const storage = multer.diskStorage({
 })
 
 const fileFilter = (req, file, cb) => {
-    if(file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.mimetype === 'application/vnd.ms-excel')
+    if(['xls','xlsx'].indexOf(file.originalname.split('.')[file.originalname.split('.').length-1]) === -1)
     {
-        
-        cb(null, true)
+        return cb(new Error('Wrong extension type'))
     } else{
-        cb(null, false)
+        cb(null, true)
     }
 }
 

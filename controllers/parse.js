@@ -1,22 +1,24 @@
 const xlsx2json = require('xlsx-2-json')
 const appRoot = require('app-root-path')
 const fs = require('fs')
-
+const error = require('../utils/errorHandler')
 module.exports.create = function (req, res) {
     const filename = req.files[0].filename;
-    const path = req.files[0].destination;
-    const outpath = `${appRoot}\\outjson\\output.json`
+    // const path = req.files[0].destination;
+    const outfile = 'outjson.json'
+    const out = `${appRoot}/outjson/${outfile}`
+    // const outpath = `${appRoot}\\outjson\\output.json`
     const temp = `${appRoot}\\upload\\${filename}`
-
-    xlsx2json({
+    try{
+        xlsx2json({
             input: `${temp}`,
             output: null
     }, 
         function(err, result) {
             if (err) {
-            return res.status(401).json(err);
+            return res.json({error_code:1, err_desc: err, data:null});
             } else {
-                var obj = result.map(function(element) {
+                var obj = result.map(element => {
                    return  object ={
                        "Номер": element.Номер,
                        "Тип": element.Тип_БСО,            
@@ -26,17 +28,12 @@ module.exports.create = function (req, res) {
                    
                     // console.log(obj)
                 });
-                 console.log(obj)
-                
+                console.log(obj)
             }
-            return res.status(200).json(obj)
-            
-        }    
-    )
-    try{
+        return res.status(200).json(obj)    
+        })
         fs.unlinkSync(temp)
+    } catch (e){
+        res.json(error)
     }
-    catch (e) {
-        console.log(e)
-    }     
 }
