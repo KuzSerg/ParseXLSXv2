@@ -29,6 +29,15 @@ module.exports.create = function (req, res) {
                     // console.log(obj)
                 });
                 console.log(obj)
+                var stream = JSON.stringify(obj, null, 4)
+                fs.writeFile(out, stream, function(err){
+                    if (err){
+                        console.log()
+                    }
+                    else{
+                        console.log('File written')
+                    }
+                })
             }
         return res.status(200).json(obj)    
         })
